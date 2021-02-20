@@ -15,7 +15,15 @@ solve(N, C, T).
 show_board(T).
 ```
 
-These are the only predicates you need to call.  To create a solution, you need instanced terms in `N` and `C`.  `N` is half the length of the board - or, how many of each color there are in a row (`N` = 2 produces a 4x4 board).  `C` is a list of constraint predicates.
+These are the only predicates you need to call.  To create a solution, you need instanced terms in `N` and `C`.  `N` is half the length of the board - or, how many of each color there are in a row (`N` = 2 produces a 4x4 board).  `C` is a list of constraint predicates (see below).  The resulting grid of numbers is found in `T`.  To show the board after, use `show_board(T).`, as it pretty prints the grid with proper formatting.
+
+An example query:
+
+```prolog
+?- solve(3, [...], T), show_board(T).
+```
+
+## Producing Constraints
 
 Each constraint predicate is of the form
 
@@ -24,8 +32,6 @@ c(Color, Square)
 ```
 
 ...where a `Square` is simply `[i|j]`, and `i` and `j` are the row and column of the square in the grid respectively.  `Color` is either 0 or 1 - in `0hh1`, that's red and blue respectively.
-
-## Producing Constraints
 
 Producing constraints by hand is challenging.  To help yourself out, use the script `make_constraints.py`.  You still need to record information about the locked squares at the start of the puzzle, but the script will format that info for you.
 
