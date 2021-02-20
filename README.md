@@ -15,12 +15,12 @@ solve(N, C, T).
 show_board(T).
 ```
 
-These are the only predicates you need to call.  To create a solution, you need instanced terms in `N` and `C`.  `N` is half the length of the board - or, how many of each color there are in a row (`N` = 2 produces a 4x4 board).  `C` is a list of constraint predicates (see below).  The resulting grid of numbers is found in `T`.  To show the board after, use `show_board(T).`, as it pretty prints the grid with proper formatting.
+These are the only predicates you need to call.  To create a solution, you need instanced terms in `N` and `C`.  `N` is half the length of the board - or, how many of each color there are in a row (`N` = 2 produces a 4x4 board).  `C` is a list of constraint predicates (see below).  The resulting grid of numbers is found in `T`.  To show the board after, use `show_board(T).`, as it pretty prints the grid with proper formatting.  (If you look in the code, you can see this is already included in `solve()`.)
 
 An example query:
 
 ```prolog
-?- solve(3, [...], T), show_board(T).
+?- solve(3, [...], T).
 ```
 
 ## Producing Constraints
