@@ -19,7 +19,7 @@ These are the only predicates you need to call.  To create a solution, you need 
 
 Each constraint predicate is of the form
 
-```
+```prolog
 c(Color, Square)
 ```
 
@@ -42,6 +42,18 @@ So, if  your puzzle has a '0' at square (2, 3), you must put in the following:
 ```
 
 Try not to put any spaces or unnecessary characters.
+
+Once you have your file of constrained squares, pass it in to the script on the command line.  For example:
+
+```
+python make_constraints.py tests/marbles.txt
+```
+
+It will then print out a comma separated list of constraints.  Paste its output in `C` when you make a query as such:
+
+```prolog
+?- solve(4, [HERE: c(Color, Square), c(Color, Square), etc.], T).
+```
 
 ## Statistics
 
