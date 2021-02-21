@@ -22,10 +22,6 @@ list_eq([X|Xs], [Y|Ys]) :- X = Y, list_eq(Xs, Ys).
 
 list_member(Xs, [Hs|Ts]) :- list_eq(Xs, Hs) ; list_member(Xs, Ts).
 
-list_not_member(Xs, [Hs|Ts]) :- dif(Xs, Hs) ; list_not_member(Xs, Ts).
-
-no_dup_lists([]).
-no_dup_lists([Xs|Xss]) :- list_not_member(Xs, Xss), no_dup_lists(Xss).
 % no_dup_lists([]).
 % no_dup_lists([Xs|Xss]) :- not(list_member(Xs, Xss)), no_dup_lists(Xss).
 

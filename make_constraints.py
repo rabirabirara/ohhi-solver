@@ -3,9 +3,9 @@ import sys
 def make_constraint(strn):
     strn = strn.strip()
     nums = strn.split(',', 3)
-    color = nums[0]
-    i = nums[1]
-    j = nums[2]
+    i = nums[0]
+    j = nums[1]
+    color = nums[2]
     return f"c({color}, [{i}|{j}])"
 
 def main():
