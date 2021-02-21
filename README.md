@@ -4,9 +4,9 @@
 
 ## Instructions
 
-You need to have SWI-Prolog installed on your computer.
+You need to have either GNU-Prolog or SWI-Prolog installed on your computer.
 
-Open the `swipl` REPL in a terminal and type in `consult('ohhi.pro')` (or whatever the file path to the solver is) to input.
+Open the `gprolog` or `swipl` REPL in a terminal and type in `consult('ohhi.pro')` (or whatever the file path to the solver is) to input.
 
 The (usage) API for the solver is very simple:
 
@@ -71,7 +71,15 @@ It will then print out a comma separated list of constraints.  Paste its output 
 
 ## Statistics
 
-An 8x8 board can be solved in a quarter second, while a 12x12 board takes around three.  Realistically, the bottleneck for bringing a puzzle from initial state to completion is not producing the solution with the solver - it's typing in the solution by hand!
+The `gprolog` implementation should solve a 12x12 board in a few dozen milliseconds, while the `swipl` implementation
+takes several times as much time - around three seconds for a 12x12 board.
+
+I am unsure as to why this is.  But one thing is for sure - all of the program execution time is sucked up by the one line
+mapping `no_3_cont` to the transposeed grid.  I suspect it isn't actually the inferiority of the SWI implementation,
+but just a bug.
+
+Realistically, the bottleneck for bringing a puzzle from initial state to completion is not 
+producing the solution with the solver - it's typing in the solution by hand!
 
 ## Resources
 

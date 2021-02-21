@@ -12,7 +12,7 @@ no_3_cont([]) :- !.
 no_3_cont([_]) :- !.
 no_3_cont([_, _]) :- !.
 no_3_cont([A, B, C | T]) :-
-    sat(+([A, B, C]) * +([~A, ~B, ~C])), no_3_cont([B, C | T]).
+    sat(+([A + B + C]) * +([~A + ~B + ~C])), no_3_cont([B, C | T]).
 % Don't use cut fail there. Fails the ENTIRE thing.
 
 
