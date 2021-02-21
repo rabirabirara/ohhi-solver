@@ -18,7 +18,7 @@ no_3_cont([A, B, C | T]) :-
 
 % No two rows/columns are same.
 list_eq([], []).
-list_eq([X|Xs], [Y|Ys]) :- X = Y, list_eq(Xs, Ys).
+list_eq([X|Xs], [Y|Ys]) :- X #= Y, list_eq(Xs, Ys).
 
 list_member(Xs, [Hs|Ts]) :- list_eq(Xs, Hs) ; list_member(Xs, Ts).
 
@@ -33,7 +33,9 @@ no_dups_labeled([Xs|Xss]) :-
 
 
 % Exactly N0 of each color in a row/column.
-n0_many(N0, L) :- sat(card([N0], L)).
+% sat(card()) is slower than summation. card() averages around 5500 ms, while sum() averages around 4400 ms.
+% n0_many(N0, L) :- sat(card([N0], L)).
+n0_many(N0, L) :- sum(L, #=, N0).
 
 
 % Board access.
@@ -45,26 +47,37 @@ access(Grid, [I|J], Color) :-
 cs(T, c(Color, Square)) :- access(T, Square, Color).
 
 
+% Constraining count before cardinality seems to yield better performance.
+% Maybe if I can move the no_duplicates constraints before no_3_cont, I can improve its performance.
 solve(N0, C, T) :-
     N is N0 * 2,
     length(T, N),
     maplist(fliplength(N), T),
+    append(T, Vs), Vs ins 0..1,
     maplist(cs(T), C),
-    transpose(T, TT),
     maplist(no_3_cont, T),
-    maplist(no_3_cont, TT),
-    % For some reason... above deterministic, below non??
     maplist(n0_many(N0), T),
+    transpose(T, TT),
     maplist(n0_many(N0), TT),
+    maplist(no_3_cont, TT), % Solver clicks here. Worth 3500 milliseconds. Must occur before labeling, else loop.  Show board before/after for a show!
     maplist(labeling, T),
     no_dups_labeled(T),
-    no_dups_labeled(TT),
-    show_board(T).
+    no_dups_labeled(TT).
 
 show_board([]).
 show_board([Xs|Xss]) :-
     write(Xs), nl,
     show_board(Xss).
+
+ohhi(N0, C) :- solve(N0, C, T), show_board(T).
+
+solve_test(N0, C, T, R) :-
+    statistics(runtime, [Start|_]),
+    solve(N0, C, T),
+    statistics(runtime, [End|_]),
+    show_board(T),
+    R is End - Start.
+
 
 % So, I tried to use the solver on a 12x12 board, and my fastest 12x12 time is 5:40... I was 75% done with the inputs when I realized I had taken 7 minutes already... crime doesn't pay.
 % Welp.  Just got to automate the input too!

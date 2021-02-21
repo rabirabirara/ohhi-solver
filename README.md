@@ -63,7 +63,7 @@ It will then print out a comma separated list of constraints.  Paste its output 
 
 ## Statistics
 
-An 8x8 board can be solved in around a second, while a 12x12 board takes a few seconds (around 6-7).  Realistically, the bottleneck for bringing a puzzle from initial state to completion is not producing the solution with the solver - it's typing in the solution by hand!
+An 8x8 board can be solved in around a second, while a 12x12 board takes a few seconds (around 4-5).  Realistically, the bottleneck for bringing a puzzle from initial state to completion is not producing the solution with the solver - it's typing in the solution by hand!
 
 
 
