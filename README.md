@@ -65,7 +65,13 @@ It will then print out a comma separated list of constraints.  Paste its output 
 
 An 8x8 board can be solved in around a second, while a 12x12 board takes a few seconds (around 4-5).  Realistically, the bottleneck for bringing a puzzle from initial state to completion is not producing the solution with the solver - it's typing in the solution by hand!
 
+## Resources
 
+I wanted to improve the performance of the solver.  In my research I stumbled upon a slew of papers regarding the binary puzzle.  
+While I didn't learn anything I didn't already know - the solver's bottlenecks are not in my theoretical implementation of the constraints - I was enthused
+to read fancy research papers about the problem.  Probably the most succinct description of the problem is here:
+
+- Putranto Utomo and Ruud Pellikaan. Binary Puzzle as a SAT Problem; accessed February 20, 2021. https://www.win.tue.nl/~ruudp/paper/82.pdf
 
 
 
