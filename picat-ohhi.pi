@@ -1,0 +1,83 @@
+import util, sat.
+
+
+board(Board) => Board = 
+    [[1,_,_,_],
+     [_,_,_,_],
+     [_,0,_,1],
+     [_,1,_,_]].
+    /* [[1,_,_,_], */ % This works, but gives two wrong answers.  It should fail.
+    /*  [0,1,0,_], */
+    /*  [0,0,1,1], */
+    /*  [_,1,1,_]]. */
+    /* [[_,_],[1,_]]. */
+
+% three contiguous and equal
+no_threes([]) => true.
+no_threes([_]) => true.
+no_threes([_, _]) => true.
+no_threes([A, B, C | T]) =>
+    ((A #\/ B) #\/ C) #/\ (((#~A) #\/ (#~B)) #\/ (#~C)),
+    no_threes([B, C | T]).
+
+
+% all rows different
+list_equal([], []) => true.
+list_equal([X|Xs], [Y|Ys]) =>
+    X #<=> Y,
+    list_equal(Xs, Ys).
+
+list_member(_, []) => false.
+list_member(List, [Xs|Xss]) =>
+    list_equal(List, Xs);
+    list_member(List, Xss).
+
+lists_distinct([]) => true.
+lists_distinct([Xs|Xss]) =>
+    (not list_member(Xs, Xss)),
+    lists_distinct(Xss).
+    
+main =>
+    board(Board),
+    N #= Board.length / 2,
+    println(N),
+    foreach (Row in Board)
+        Row :: 0..1
+    end,
+
+    println(Board),
+
+    Rows = rows(Board),
+    Cols = columns(Board),
+
+    foreach (Row in Rows)
+        no_threes(Row)
+    end,
+    foreach (Col in Cols)
+        no_threes(Col),
+    end,
+
+    println(Board),
+
+    foreach (Row in Rows)
+        exactly(N, Row, 0)
+    end,
+    foreach (Col in Cols)
+        exactly(N, Col, 0)
+    end,
+
+    println(Board),
+
+    /* lists_distinct(Rows), */
+    /* lists_distinct(Cols), */
+
+    println(Board),
+
+    Boards = solve_all(Board),
+    foreach (B in Boards)
+        foreach (R in B)
+            writeln(R)
+        end,
+        nl
+    end.
+
