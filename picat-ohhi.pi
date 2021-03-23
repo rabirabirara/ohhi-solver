@@ -1,83 +1,90 @@
-import util, sat.
+import util, datetime, cp, sat.
 
 
 board(Board) => Board = 
-    [[1,_,_,_],
-     [_,_,_,_],
-     [_,0,_,1],
-     [_,1,_,_]].
-    /* [[1,_,_,_], */ % This works, but gives two wrong answers.  It should fail.
-    /*  [0,1,0,_], */
-    /*  [0,0,1,1], */
-    /*  [_,1,1,_]]. */
-    /* [[_,_],[1,_]]. */
+    /* [[_,_,_,_], */
+    /*  [_,_,_,_], */
+    /*  [_,_,_,_], */
+    /*  [_,_,_,_]]. */
+    /* [[_,_,_,_,_,_], */
+    /*  [_,_,_,_,_,_], */
+    /*  [_,_,_,_,_,_], */
+    /*  [_,_,_,_,_,_], */
+    /*  [_,_,_,_,_,_], */
+    /*  [_,_,_,_,_,_]]. */
+    [[_,_,_,0,_,_,_,_,_,_,_,0],
+     [1,_,1,_,_,_,0,_,0,_,_,_],
+     [_,_,_,_,0,0,_,_,_,1,_,_],
+     [_,_,_,0,0,_,_,_,_,1,1,_],
+     [1,_,1,_,_,0,_,0,_,_,_,_],
+     [_,_,_,_,_,_,_,_,1,_,_,_],
+     [0,_,_,0,_,_,0,_,_,_,_,1],
+     [0,_,_,_,_,0,0,_,1,_,0,_],
+     [_,1,_,_,_,_,_,_,_,_,0,_],
+     [_,_,_,_,_,_,_,0,_,_,_,_],
+     [1,_,_,1,1,_,_,_,_,1,_,_],
+     [1,_,_,_,_,0,_,0,0,_,0,_]].
 
 % three contiguous and equal
-no_threes([]) => true.
-no_threes([_]) => true.
-no_threes([_, _]) => true.
+no_threes(L), L.length < 3 => true.
 no_threes([A, B, C | T]) =>
     ((A #\/ B) #\/ C) #/\ (((#~A) #\/ (#~B)) #\/ (#~C)),
     no_threes([B, C | T]).
 
 
 % all rows different
-list_equal([], []) => true.
-list_equal([X|Xs], [Y|Ys]) =>
-    X #<=> Y,
-    list_equal(Xs, Ys).
+% main bottleneck, takes hundreds of ms
+lists_distinct(Board) =>
+    M = Board.length,
+    % Every time there is a difference in the vector, produce a 1.
+    % If they were all the same, the resulting list comprehension would be 0.
+    % Then the sum of the list would be 0, which yields false.
+    foreach (I in 1..M, J in I+1..M)
+        /* sum([Board[I, K] #= Board[J, K] : K in 1..M]) #< M, */
+        /* sum([Board[K, I] #= Board[K, J] : K in 1..M]) #< M, */
+        /* sum([Board[I, K] #!= Board[J, K] : K in 1..M]) #> 0, */
+        /* sum([Board[K, I] #!= Board[K, J] : K in 1..M]) #> 0, */
+        scalar_product(Board[I], Board[J], #!=, M)  % add the second lists_distinct for the cols too
+    end.
 
-list_member(_, []) => false.
-list_member(List, [Xs|Xss]) =>
-    list_equal(List, Xs);
-    list_member(List, Xss).
-
-lists_distinct([]) => true.
-lists_distinct([Xs|Xss]) =>
-    (not list_member(Xs, Xss)),
-    lists_distinct(Xss).
+current_time_seconds() = Time =>
+    $time(Hours, Mins, Secs) = current_time(),
+    Time = 60*60*Hours + 60*Mins + Secs.
     
 main =>
     board(Board),
     N #= Board.length / 2,
-    println(N),
     foreach (Row in Board)
         Row :: 0..1
     end,
 
-    println(Board),
-
-    Rows = rows(Board),
-    Cols = columns(Board),
-
-    foreach (Row in Rows)
-        no_threes(Row)
+    % exactly/3 first, then no_threes/1, is faster by a few ms.
+    foreach (Row in Board)
+        exactly(N, Row, 0),
+        no_threes(Row),
     end,
-    foreach (Col in Cols)
+
+    BoardT = transpose(Board),
+
+    foreach (Col in BoardT)
+        exactly(N, Col, 0),
         no_threes(Col),
     end,
 
-    println(Board),
+    lists_distinct(Board),
+    lists_distinct(BoardT),
 
-    foreach (Row in Rows)
-        exactly(N, Row, 0)
-    end,
-    foreach (Col in Cols)
-        exactly(N, Col, 0)
-    end,
+    Boards = solve_all([], Board),
 
-    println(Board),
-
-    /* lists_distinct(Rows), */
-    /* lists_distinct(Cols), */
-
-    println(Board),
-
-    Boards = solve_all(Board),
     foreach (B in Boards)
         foreach (R in B)
-            writeln(R)
+            println(R)
         end,
         nl
     end.
+
+
+
+% N = 2, 72 solutions.
+% N = 3, 4140 solutions.
 
