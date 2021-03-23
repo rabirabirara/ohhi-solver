@@ -69,14 +69,29 @@ It will then print out a comma separated list of constraints.  Paste its output 
 ?- solve(4, [HERE: c(Color, Square), c(Color, Square), etc.], T).
 ```
 
+## Using the Picat script
+
+Picat is a multi-paradigm language; you can think of it as Prolog for general purpose programming.  It includes
+imperative/functional features and is absolutely excellent as a logic/constraint/planning solver.  You'll notice that
+the Picat program is much more concise and expressive.
+
+Picat programs can only be run with the Picat interpreter.  To give a test case to the script, you have to enter
+in the board yourself, by editing the `board/1` function.  Install the Picat language system, and then run the
+script with `picat picat-ohhi.pi`.  You can do that, or run the Picat REPL and include the script with `cl(picat-ohhi)`.
+
+
 ## Statistics
 
-The `gprolog` implementation should solve a 12x12 board in a few dozen milliseconds, while the `swipl` implementation
+The `gprolog` implementation should solve a 12x12 board in a dozen milliseconds, while the `swipl` implementation
 takes several times as much time - around three seconds for a 12x12 board.
 
 I am unsure as to why this is.  But one thing is for sure - all of the program execution time is sucked up by the one line
 mapping `no_3_cont` to the transposeed grid.  I suspect it isn't actually the inferiority of the SWI implementation,
 but just a bug.
+
+The Picat solution doesn't have time measurements in the milliseconds, but we can use the GNU `time` utility to time
+all the solutions anyway - this makes more sense as `gprolog` can be compiled into an executable, while Picat files cannot.
+Picat takes a little less time than `gprolog`, but still takes time in the order of several milliseconds.
 
 Realistically, the bottleneck for bringing a puzzle from initial state to completion is not 
 producing the solution with the solver - it's typing in the solution by hand!

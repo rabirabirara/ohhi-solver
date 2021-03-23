@@ -84,6 +84,9 @@ solve_test(N0, C, T, R) :-
     show_board(T),
     R is End - Start.
 
+solve_spec :- ohhi(6, [c(1, [1|1]),c(1, [1|4]),c(0, [1|7]),c(1, [2|3]),c(0, [2|10]),c(1, [3|3]),c(0, [3|5]),c(1, [3|8]),c(0, [3|10]),c(0, [3|12]),c(1, [4|1]),c(1, [4|2]),c(0, [4|5]),c(1, [5|2]),c(0, [5|6]),c(1, [5|8]),c(1, [5|10]),c(0, [6|6]),c(0, [6|9]),c(0, [7|3]),c(1, [8|10]),c(1, [8|11]),c(0, [9|1]),c(0, [9|2]),c(1, [9|4]),c(0, [9|6]),c(0, [9|9]),c(1, [10|6]),c(1, [10|7]),c(1, [10|12]),c(1, [11|4]),c(0, [11|9]),c(0, [12|3]),c(0, [12|6]),c(0, [12|12])]).
+
+:- initialization(solve_spec).
 
 % So, I tried to use the solver on a 12x12 board, and my fastest 12x12 time is 5:40... I was 75% done with the inputs when I realized I had taken 7 minutes already... crime doesn't pay.
 % Welp.  Just got to automate the input too!
