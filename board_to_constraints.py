@@ -1,6 +1,8 @@
 import sys
 
-def make_constraint(strn):
+# Reads from a file.
+
+def generate_constraint(strn):
     strn = strn.strip()
     nums = strn.split(',', 3)
     i = nums[0]
@@ -8,15 +10,18 @@ def make_constraint(strn):
     color = nums[2]
     return f"c({color}, [{i}|{j}])"
 
+def generate_constraints():
+    constraints = list(map(generate_constraint, lines))
+    arg = ",".join(constraints)
+    print(arg)
+
 def main():
     if len(sys.argv) < 2:
         sys.exit("Pass in a file name.")
-    filename = sys.argv[1]
-    with open(filename) as f:
-        lines = f.readlines()
-    constraints = list(map(make_constraint, lines))
-    arg = ",".join(constraints)
-    print(arg)
+    else:
+        filename = sys.argv[1]
+        with open(filename) as f:
+            lines = f.readlines()
 
 if __name__ == '__main__':
     main()
