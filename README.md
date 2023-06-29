@@ -6,6 +6,20 @@
 
 You need to have either GNU-Prolog or SWI-Prolog installed on your computer.
 
+#### Compiling an executable
+
+GNU-Prolog has a compiler called `gplc`. Compile the gprolog-targeting script like this:
+
+```
+gplc gnu-ohhi.pl
+```
+
+Simple as that. It should produce an executable. I reccommend passing in the arguments `-o build/<executable-name>`.
+
+The executable takes two arguments on the command line: a number (N/2 for an NxN board) and a string (valid prolog syntax produced by make_constraints.py).
+
+#### REPL
+
 Open the `gprolog` or `swipl` REPL in a terminal and type in `consult('ohhi.pro')` (or whatever the file path to the solver is) to input.
 
 The (usage) API for the solver is very simple:
