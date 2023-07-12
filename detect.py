@@ -4,7 +4,9 @@ import argparse
 from math import sqrt
 
 def show(img):
-    cv.imshow("", img)
+    cv.namedWindow("window", cv.WINDOW_NORMAL)
+    cv.resizeWindow("window", 1280, 720)
+    cv.imshow("window", img)
     if cv.waitKey(0) == ord("q"):
         cv.destroyAllWindows()
 
@@ -15,7 +17,6 @@ def d():
 
 def get_edges(img):
     return cv.Canny(img, 100, 200)
-
 
 # Parse cmd-line args
 parser = argparse.ArgumentParser(description="Process an image.")
@@ -54,19 +55,20 @@ board_contours = []
 # Filter contours by area, shape, aspect_ratio, hierarchy
 for contour in contours:
     area = cv.contourArea(contour)
-    # perimeter = cv.arcLength(contour, True)
-    if area == 0.0 or area < 500:
+    if area == 0.0 or area < 2000:
         continue
+    
     # Perimeter-Area relation: https://link.springer.com/chapter/10.1007/978-1-4899-2124-6_12
+    # perimeter = cv.arcLength(contour, True)
     # ratio = perimeter / sqrt(area)
     # ratio should be around 4 for a square
     # if not 3.8 < ratio < 4.1:
         # pass (see below)
+    
+    # Aspect ratio filtering
     x, y, w, h = cv.boundingRect(contour)
     aspect_ratio = float(w) / h
-    if not 0.9 < aspect_ratio < 1.1:
-        print(f"not a square: {aspect_ratio}")
-        cv.drawContours(img, [contour], 0, (255,0,0), 2)
+    if not 0.97 < aspect_ratio < 1.03:
         continue
     
     cv.drawContours(img, [contour], 0, (0,255,0), 2)
@@ -74,10 +76,6 @@ for contour in contours:
 
 board = cv.drawContours(img, board_contours, -1, (0,255,0), 2)
 # weird = cv.drawContours(img, weird_contours, -1, (0,255,0), 2)
-    
-    
-        
-    
 
 
 # cv.drawContours(img, contours, -1, (0,255,0), 3)
