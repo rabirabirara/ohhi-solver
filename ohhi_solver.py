@@ -10,7 +10,7 @@ import detect_board as detect
 import gen_constraints as gen_cons
 
 # Put path of the compiled executable of gnu-ohhi.pl
-EXECUTABLE = "build/gnu-ohhi.exe"
+EXECUTABLE = "build\\gnu-ohhi.exe"
 CURRENT_THEME = "theme1"
 
 
@@ -82,11 +82,11 @@ def main():
 
     (n, spec) = detect.img_to_spec_n(cv_img)
 
-    constraints = gen_cons.spec_to_constraints(spec)
+    constraints_str = gen_cons.spec_to_constraints(spec)
 
     # Call the prolog subroutine
-    result = subprocess.run(
-        [EXECUTABLE, n, constraints], capture_output=True, text=True
+    result = subprocess.check_output(
+        [EXECUTABLE, str(n), constraints_str], text=True
     )
     
     # The output is just each list printed on a new line, so we need to 
@@ -95,9 +95,6 @@ def main():
     
     # * For convenience: interpret the string as python instead of parsing it.
     board = ast.literal_eval(board_str)
-
-
-
 
 if __name__ == "__main__":
     main()
