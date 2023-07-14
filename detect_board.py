@@ -3,13 +3,16 @@ import numpy as np
 import argparse
 from math import sqrt, floor
 
+# How to use:
+# Import this file, and then pass the image (as numpy array) to run(img). It should return a board or throw exception.
+
 map_bgr = {
     0: [[30, 45], [30, 45], [30, 45]],  # gray
     1: [[40, 55], [60, 85], [170, 210]],  # red
     2: [[175, 205], [150, 180], [40, 55]],  # blue
 }
 
-
+# Convenience, open an image.
 def show(img):
     cv.namedWindow("window", cv.WINDOW_NORMAL)
     cv.resizeWindow("window", 1280, 720)
@@ -34,11 +37,6 @@ def show_board(board):
 
 def d():
     cv.destroyAllWindows()
-
-
-def get_edges(img):
-    return cv.Canny(img, 100, 200)
-
 
 def get_mins_maxs(points):
     (x_min, x_max, y_min, y_max) = (100000, 0, 100000, 0)
@@ -80,7 +78,7 @@ def run(img):
     no_bg = cv.bitwise_and(img, img, mask=gray_mask)
 
     # Edge detection on colored image will yield the bottom bezel lines, this can be used to detect where the filled squares are.
-    edges = get_edges(no_bg)
+    edges = cv.Canny(no_bg, 100, 200)
 
     # Find contours
     contours, hierarchy = cv.findContours(edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
