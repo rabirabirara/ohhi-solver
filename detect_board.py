@@ -92,14 +92,15 @@ def approx_color(bgr):
     raise ValueError(f"Color not found: {bgr}")
 
 
-def img_to_spec_n(img):
-    flat = img_to_flat(img)
+def img_to_spec_n_coords(img):
+    flat, coords = img_to_flat(img)
     n = int(sqrt(len(flat)))
-    return (n, flat_to_spec(flat))
+    return (n, flat_to_spec(flat), coords)
 
 
 def img_to_spec(img):
-    return flat_to_spec(img_to_flat(img))
+    flat, _ = img_to_flat(img)
+    return flat_to_spec(flat)
 
 
 def img_to_flat(img):
@@ -157,6 +158,7 @@ def img_to_flat(img):
     blk_mask = np.empty_like(img)
 
     squares = []
+    coords = []
 
     # OPTIONAL: extract squares and mask them on img
     for c in board_contours:
@@ -165,10 +167,20 @@ def img_to_flat(img):
         approx = cv.approxPolyDP(c, epsilon, True)
         squares.append(approx)
 
+        # Obtain centers of each squae, for clicking on
+        M = cv.moments(c)
+        cx = int(M["m10"] / M["m00"])
+        cy = int(M["m01"] / M["m00"])
+        coords.append((cx, cy))
+
         # Draw them onto a mask
         cv.fillPoly(blk_mask, [approx], (255, 255, 255))
+
     # Extract the interesting bits from the image using the mask (optional)
     final = cv.bitwise_and(img, blk_mask)
+
+    # Just like squares, is in reverse order, so correct that
+    coords.reverse()
 
     flat_board = []
 
@@ -189,7 +201,7 @@ def img_to_flat(img):
 
     # show_board(flat_board)
 
-    return flat_board
+    return flat_board, coords
 
 
 def main():

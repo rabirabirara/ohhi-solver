@@ -80,7 +80,8 @@ def main():
     np_img = np.array(screenshot)
     cv_img = cv.cvtColor(np_img, cv.COLOR_RGB2BGR)
 
-    (n, spec) = detect.img_to_spec_n(cv_img)
+    # coords is 1d list of tuples
+    (n, spec, coords) = detect.img_to_spec_n_coords(cv_img)
 
     constraints_str = gen_cons.spec_to_constraints(spec)
 
@@ -98,7 +99,17 @@ def main():
     board_str = "[" + ",".join(result.splitlines()) + "]"
     board = ast.literal_eval(board_str)
 
-    print_neat(board)
+    detect.show_2d_board([[x+1 for x in l] for l in board])
+
+    # Clicking: have the script actually click as appropriate on the coords according to the solution.
+    # 0 means left click, 1 means right click.
+    for i in range(n):
+        for j in range(n):
+            click_type = "right" if board[i][j] else "left"
+            (x, y) = coords[n * i + j]
+            pyautogui.click(x=x, y=y, button=click_type, duration=0.0)
+
+    print("Script completed.")
 
 
 if __name__ == "__main__":
