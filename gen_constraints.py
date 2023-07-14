@@ -13,7 +13,7 @@ def generate_constraint(strn):
 def generate_constraints(lines):
     constraints = list(map(generate_constraint, lines))
     arg = ",".join(constraints)
-    return '"[' + arg + ']"'
+    return '[' + arg + ']'
     
 def spec_to_constraints(spec):
     lines = spec.splitlines()
