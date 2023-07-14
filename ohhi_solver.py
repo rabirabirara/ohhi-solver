@@ -85,16 +85,21 @@ def main():
     constraints_str = gen_cons.spec_to_constraints(spec)
 
     # Call the prolog subroutine
-    result = subprocess.check_output(
-        [EXECUTABLE, str(n), constraints_str], text=True
-    )
-    
-    # The output is just each list printed on a new line, so we need to 
-    # make a list of lists by adding an extra pair of braces at the end.
-    board_str = '[' + result.stdout + ']'
-    
-    # * For convenience: interpret the string as python instead of parsing it.
+    result = subprocess.check_output([EXECUTABLE, str(n), constraints_str], text=True)
+
+    # Example output:
+    """
+    [...]
+    [...]
+    """
+    # Note the lack of commas and outer braces. We must add those back in.
+
+    # Interpret the string as python instead of parsing it.
+    board_str = "[" + ",".join(result.splitlines()) + "]"
     board = ast.literal_eval(board_str)
+
+    print_neat(board)
+
 
 if __name__ == "__main__":
     main()
