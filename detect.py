@@ -111,7 +111,7 @@ def run(img):
     
     n = floor(sqrt(len(board_contours)))
     if n * n != len(board_contours):
-        print(f"Invalid board size: n = {n} with {len(board_contours)} many squares found; check the board detection code.")
+        raise ValueError(f"Invalid board size: n = {n} with {len(board_contours)} many squares found; check the board detection code.")
 
     # All black image in the same shape
     blk_mask = np.empty_like(img)
@@ -162,8 +162,8 @@ def main():
     # Use OpenCV to read the image
     img = cv.imread(image)
     
-    run(img)
-
+    board = run(img)
+    show_board(board)
 
 if __name__ == "__main__":
     main()
