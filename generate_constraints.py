@@ -10,10 +10,14 @@ def generate_constraint(strn):
     color = nums[2]
     return f"c({color}, [{i}|{j}])"
 
-def generate_constraints():
+def generate_constraints(lines):
     constraints = list(map(generate_constraint, lines))
     arg = ",".join(constraints)
-    print(arg)
+    return arg
+    
+def spec_to_constraints(spec):
+    lines = spec.splitlines()
+    return generate_constraints(lines)
 
 def main():
     if len(sys.argv) < 2:
@@ -22,6 +26,7 @@ def main():
         filename = sys.argv[1]
         with open(filename) as f:
             lines = f.readlines()
+            generate_constraints(lines)
 
 if __name__ == '__main__':
     main()
