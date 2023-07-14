@@ -74,7 +74,6 @@ def get_mins_maxs(points):
 def between(n, low, high):
     return low < n < high
 
-
 def between_t(n, arr):
     return arr[0] < n < arr[1]
 
