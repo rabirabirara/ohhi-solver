@@ -55,8 +55,8 @@ access(Grid, [I|J], Color) :-
 cs(T, c(Color, Square)) :- access(T, Square, Color).
 
 
-solve(N0, C, T) :-
-    N is N0 * 2,
+solve(N, C, T) :-
+    N0 is div(N, 2),
     length(T, N),
     maplist(fliplength(N), T),
     maplist(fd_domain_bool, T),
@@ -75,11 +75,11 @@ show_board([Xs|Xss]) :-
     write(Xs), nl,
     show_board(Xss).
 
-ohhi(N0, C) :- solve(N0, C, T), show_board(T).
+ohhi(N, C) :- solve(N, C, T), show_board(T).
 
-solve_test(N0, C, T, R) :-
+solve_test(N, C, T, R) :-
     statistics(cpu_time, [Start|_]),
-    solve(N0, C, T),
+    solve(N, C, T),
     statistics(cpu_time, [End|_]),
     show_board(T),
     R is End - Start.
@@ -91,12 +91,12 @@ solve_spec :- ohhi(6, [c(1, [1|1]),c(1, [1|4]),c(0, [1|7]),c(1, [2|3]),c(0, [2|1
 main :-
     % Set double-quoted things as atoms instead of strings (character lists).
     set_prolog_flag(double_quotes, atom),
-    argument_value(1, N0_STR), number_atom(N0, N0_STR), % Converts string to number (parse)
+    argument_value(1, N_STR), number_atom(N, N_STR), % Converts string to number (parse)
     % Apparently, atom (strings) end with eof. Crazy.
     argument_value(2, C_STR), read_term_from_atom(C_STR, C, [end_of_term(eof)]), % is what is used to convert shell-given strings to terms, see http://www.gprolog.org/manual/gprolog.html#sec81
-    % write(N0), nl,
+    % write(N), nl,
     % write(C), nl,
-    ohhi(N0, C),
+    ohhi(N, C),
     halt.
 
 :- initialization(main).
