@@ -7,9 +7,9 @@ from math import sqrt, floor
 # Import this file, and then pass the image (as numpy array) to run(img). It should return a board or throw exception.
 
 map_bgr = {
-    0: [[30, 45], [30, 45], [30, 45]],  # gray
-    1: [[40, 55], [60, 85], [170, 210]],  # red
-    2: [[175, 205], [150, 180], [40, 55]],  # blue
+    0: [[30, 50], [30, 50], [30, 50]],  # gray
+    1: [[35, 55], [55, 85], [165, 210]],  # red
+    2: [[165, 205], [150, 180], [35, 55]],  # blue
 }
 
 
@@ -74,6 +74,7 @@ def get_mins_maxs(points):
 def between(n, low, high):
     return low < n < high
 
+
 def between_t(n, arr):
     return arr[0] < n < arr[1]
 
@@ -87,8 +88,7 @@ def approx_color(bgr):
         return 1
     if between_t(b, blue[0]) and between_t(g, blue[1]) and between_t(r, blue[2]):
         return 2
-    print(f"Color not found: {bgr}")
-    return None
+    raise ValueError(f"Color not found: {bgr}")
 
 
 def img_to_spec_n(img):
@@ -113,14 +113,19 @@ def img_to_flat(img):
     edges = cv.Canny(no_bg, 100, 200)
 
     # Find contours
-    contours, hierarchy = cv.findContours(
-        edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE
-    )
+    contours, hierarchy = cv.findContours(edges, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE)
 
     board_contours = []
 
     # Filter contours by area, shape, aspect_ratio, hierarchy
-    for contour in contours:
+    for i in range(len(contours)):
+        contour = contours[i]
+        h = hierarchy[0][i]
+
+        # Select contours with no parent (outermost)
+        if h[3] != -1:
+            continue
+
         area = cv.contourArea(contour)
         if area < 2000:
             continue
@@ -142,7 +147,7 @@ def img_to_flat(img):
         board_contours.append(contour)
 
     n = floor(sqrt(len(board_contours)))
-    if n * n != len(board_contours):
+    if n * n != len(board_contours) or n % 2 == 1:
         raise ValueError(
             f"Invalid board size: n = {n} with {len(board_contours)} many squares found; check the board detection code."
         )
@@ -161,7 +166,6 @@ def img_to_flat(img):
 
         # Draw them onto a mask
         cv.fillPoly(blk_mask, [approx], (255, 255, 255))
-
     # Extract the interesting bits from the image using the mask (optional)
     final = cv.bitwise_and(img, blk_mask)
 
