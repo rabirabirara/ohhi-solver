@@ -31,6 +31,7 @@ def flat_to_spec(flat_board):
             color = flat_board[n * i + j]
             if color != 0:
                 board_spec += f"{i},{j},{color - 1}"
+    return board_spec
 
 
 def flat_to_2d(flat_board):
