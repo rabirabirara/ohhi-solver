@@ -30,7 +30,7 @@ def flat_to_spec(flat_board):
         for j in range(n):
             color = flat_board[n * i + j]
             if color != 0:
-                board_spec += f"{i},{j},{color - 1}\n"
+                board_spec += f"{i+1},{j+1},{color - 1}\n"
     return board_spec
 
 
