@@ -12,6 +12,7 @@ map_bgr = {
     2: [[175, 205], [150, 180], [40, 55]],  # blue
 }
 
+
 # Convenience, open an image.
 def show(img):
     cv.namedWindow("window", cv.WINDOW_NORMAL)
@@ -20,8 +21,25 @@ def show(img):
     if cv.waitKey(0) == ord("q"):
         cv.destroyAllWindows()
 
-# Shows a nxn 2d matrix of 0/1/2.
-def show_board(board):
+
+def flat_to_spec(flat_board):
+    n = int(sqrt(len(flat_board)))
+    # Converts a 1d_board to a series of lines - a specification for a board.
+    board_spec = ""
+    for i in range(n):
+        for j in range(n):
+            color = flat_board[n * i + j]
+            if color != 0:
+                board_spec += f"{i},{j},{color - 1}"
+
+
+def flat_to_2d(flat_board):
+    n = int(sqrt(len(flat_board)))
+    return np.reshape(np.array(flat_board), (-1, n))
+
+
+# Shows a 2d board (matrix)
+def show_2d_board(board):
     for row in board:
         for item in row:
             match item:
@@ -32,11 +50,15 @@ def show_board(board):
                 case 2:
                     print("🟦", end="")
                 case _:
-                    print("Invalid color in the board! Probably a None, meaning a color wasn't approximated.")
+                    print(
+                        "Invalid color in the board! Probably a None, meaning a color wasn't approximated."
+                    )
         print("")
+
 
 def d():
     cv.destroyAllWindows()
+
 
 def get_mins_maxs(points):
     (x_min, x_max, y_min, y_max) = (100000, 0, 100000, 0)
@@ -51,6 +73,7 @@ def get_mins_maxs(points):
 
 def between(n, low, high):
     return low < n < high
+
 
 def between_t(n, arr):
     return arr[0] < n < arr[1]
@@ -69,7 +92,17 @@ def approx_color(bgr):
     return None
 
 
-def run(img):
+def img_to_spec_n(img):
+    flat = img_to_flat(img)
+    n = int(sqrt(len(flat)))
+    return (flat_to_spec(flat), n)
+
+
+def img_to_spec(img):
+    return flat_to_spec(img_to_flat(img))
+
+
+def img_to_flat(img):
     # Do away with bg color
     # * This lower range is because of some #212121 line in theme 1... probably in the other themes too
     gray_lower = np.array([33, 33, 33])
@@ -81,7 +114,9 @@ def run(img):
     edges = cv.Canny(no_bg, 100, 200)
 
     # Find contours
-    contours, hierarchy = cv.findContours(edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv.findContours(
+        edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE
+    )
 
     board_contours = []
 
@@ -106,10 +141,12 @@ def run(img):
 
         # cv.drawContours(img,[contour], 0, (0,255,0), 2)
         board_contours.append(contour)
-    
+
     n = floor(sqrt(len(board_contours)))
     if n * n != len(board_contours):
-        raise ValueError(f"Invalid board size: n = {n} with {len(board_contours)} many squares found; check the board detection code.")
+        raise ValueError(
+            f"Invalid board size: n = {n} with {len(board_contours)} many squares found; check the board detection code."
+        )
 
     # All black image in the same shape
     blk_mask = np.empty_like(img)
@@ -135,19 +172,20 @@ def run(img):
     # squares is in reversed order (from bottom right to top left) so reverse it
     for square in reversed(squares):
         # square: [ [[y, x]] ... ]
-    
+
         # Get all the pixels in the square from the image
         (x1, x2, y1, y2) = get_mins_maxs(square)
         piece = final[x1:x2, y1:y2]
-    
+
         # Take average color
         bgr_avg = np.mean(piece, axis=(0, 1))
         color = approx_color(bgr_avg)
-    
+
         flat_board.append(color)
 
-    board = np.reshape(np.array(flat_board), (-1, n))
-    return board
+    # show_board(flat_board)
+
+    return flat_board
 
 
 def main():
@@ -159,10 +197,12 @@ def main():
 
     # Use OpenCV to read the image
     img = cv.imread(image)
-    
-    board = run(img)
-    show_board(board)
+
+    # Produce 1d board
+    flat_board = img_to_flat(img)
+
+    show_2d_board(flat_to_2d(flat_board))
+
 
 if __name__ == "__main__":
     main()
-
