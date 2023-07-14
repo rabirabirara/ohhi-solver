@@ -93,8 +93,8 @@ def approx_color(bgr):
 
 
 def img_to_spec_n(img):
-    n = int(sqrt(len(flat)))
     flat = img_to_flat(img)
+    n = int(sqrt(len(flat)))
     return (n, flat_to_spec(flat))
 
 
