@@ -1,11 +1,16 @@
-import cv2
+import cv2 as cv
 import pyautogui
+import numpy as np
 import sys
 import time
-import math
+import subprocess
+import ast
 
-# Do board detection here
+import detect_board as detect
+import gen_constraints as gen_cons
 
+# Put path of the compiled executable of gnu-ohhi.pl
+EXECUTABLE = "build/gnu-ohhi.exe"
 CURRENT_THEME = "theme1"
 
 
@@ -27,7 +32,7 @@ def deduped_points(points):
     for i in range(len(sorted(points, key=lambda k: [k[0], k[1]]))):
         no_dupes = True
         # Go forward, if there are duplicates don't add this.
-        for j in range(i+1, len(points)):
+        for j in range(i + 1, len(points)):
             if is_dupe_point(points[i], points[j]):
                 no_dupes = False
                 break
@@ -36,44 +41,6 @@ def deduped_points(points):
         if no_dupes:
             final.append(points[i])
     return final
-
-
-def detect_board():
-    print("Detecting board:")
-    blanks = deduped_points(
-        [
-            pyautogui.center(p)
-            for p in pyautogui.locateAllOnScreen(
-                f"img/{CURRENT_THEME}/tile-0.png",
-                grayscale=True,
-                confidence=0.9,
-            )
-        ]
-    )
-    ones = deduped_points(
-        [
-            pyautogui.center(p)
-            for p in pyautogui.locateAllOnScreen(
-                f"img/{CURRENT_THEME}/tile-1.png",
-                grayscale=True,
-                confidence=0.9,
-            )
-        ]
-    )
-    # twos = list(map(pyautogui.center, list(pyautogui.locateAllOnScreen(f"img/{CURRENT_THEME}/tile-2.png", confidence=0.98))))
-    print(f"blanks: {blanks}; {len(blanks)}")
-    print_neat(blanks)
-    print(f"ones: {ones}; {len(ones)}")
-    print_neat(ones)
-    # print(f"twos: {twos}; {len(twos)}")
-    # print_neat(twos)
-    all = sorted(set(blanks + ones), key=lambda k: [k.x, k.y])
-    if not math.log2(len(all)).is_integer():
-        print(
-            f"Invalid board size! Detected {len(all)} points. There should be a power of 2."
-        )
-    else:
-        print(all)
 
 
 def main():
@@ -107,7 +74,29 @@ def main():
     # Found. Perform the board detection
     print("Game state is active (found history icon!).")
     print(loc)
-    detect_board()
+
+    # Screenshot the game
+    screenshot = pyautogui.screenshot()
+    np_img = np.array(screenshot)
+    cv_img = cv.cvtColor(np_img, cv.COLOR_RGB2BGR)
+
+    (n, spec) = detect.img_to_spec_n(cv_img)
+
+    constraints = gen_cons.spec_to_constraints(spec)
+
+    # Call the prolog subroutine
+    result = subprocess.run(
+        [EXECUTABLE, n, constraints], capture_output=True, text=True
+    )
+    
+    # The output is just each list printed on a new line, so we need to 
+    # make a list of lists by adding an extra pair of braces at the end.
+    board_str = '[' + result.stdout + ']'
+    
+    # * For convenience: interpret the string as python instead of parsing it.
+    board = ast.literal_eval(board_str)
+
+
 
 
 if __name__ == "__main__":
