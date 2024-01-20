@@ -2,7 +2,7 @@
 
 #### A simple solver for binary sudoku.
 
-https://github.com/rabirabirara/ohhi-solver/assets/59306451/bfc44d55-3ce5-4604-ba4d-bc8312bda86b
+![ezgif-4-dfe5d7eaeb](https://github.com/rabirabirara/ohhi-solver/assets/59306451/c423f847-c5f5-4fa4-a0eb-77e075e1ba03)
 
 ## Instructions
 
