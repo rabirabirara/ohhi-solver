@@ -6,9 +6,17 @@
 
 ## Instructions
 
-You need to have either GNU-Prolog or SWI-Prolog installed on your computer. (If you want to use Picat, install that too.)
+You need to have GNU-Prolog and gplc installed on your computer. (If you want to use SWI-Prolog or Picat, install those too.)
 
 If you want to use the auto-solver script, you also need Python and pip (for the script's dependencies - e.g. OpenCV, numpy, PyAutoGUI).
+
+### Python: automatic solve
+
+Just open the website like in the above video, open the script, then press play. You need GNU-Prolog and a compiler for it.
+
+The script looks for the history icon which appears when play begins.
+
+You can change what theme the solver looks for, but only the first two themes are supported. The others are either redundant or cluttered or not viable.
 
 #### Compiling an executable
 
@@ -21,14 +29,6 @@ gplc gnu-ohhi.pl
 Simple as that. It should produce an executable. I reccommend passing in the arguments `-o build/<executable-name>`.
 
 The executable takes two arguments on the command line: a number (N/2 for an NxN board) and a string (valid prolog syntax produced by gen_constraints.py).
-
-### Python: automatic solve
-
-Just open the website like in the above video, open the script, then press play.
-
-The script looks for the history icon which appears when play begins.
-
-You can change what theme the solver looks for, but only the first two themes are supported. The others are either redundant or cluttered or not viable.
 
 ### Prolog
 
